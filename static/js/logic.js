@@ -20,6 +20,13 @@ let baseMaps = {
     "Satellite": satelliteStreets
   };
 
+// Create the earthquake layer
+let earthquakes = new L.layerGroup();
+
+let overlays = {
+    Earthquakes: earthquakes
+  };
+
 // Create map object centered on geological center of US
 let map = L.map('mapid', {
     center: [39.5, -98.5],
@@ -28,7 +35,7 @@ let map = L.map('mapid', {
 });
 
 // Pass map layers and add layer control
-L.control.layers(baseMaps).addTo(map);
+L.control.layers(baseMaps, overlays).addTo(map);
 
 // Determines the color of the circle based on the magnitude of the earthquake.
 function getColor(magnitude) {
@@ -86,5 +93,7 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
     onEachFeature: function(feature, layer) {
         layer.bindPopup("Magnitude: " + feature.properties.mag + "<br>Location: " + feature.properties.place);
     }
-  }).addTo(map);
+  }).addTo(earthquakes);
+
+  earthquakes.addTo(map);
 });
