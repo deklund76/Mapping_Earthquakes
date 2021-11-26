@@ -4,6 +4,6 @@ Files for a page displaying a map of tectonic plates and all earthquakes across 
 
 ### Example snapshot from 11/26/2021
 
-[!11-26-2021-earthquake-map](https://github.com/deklund76/Mapping_Earthquakes/blob/main/Resources/11-26-21.jpg)
+![11-26-2021-earthquake-map](https://github.com/deklund76/Mapping_Earthquakes/blob/main/Resources/11-26-21.jpg)
 
 Data courtesy of USGS.
