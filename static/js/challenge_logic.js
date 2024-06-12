@@ -5,27 +5,28 @@ console.log("working");
 let streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token={accessToken}', {
 	attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery (c) <a href="https://www.mapbox.com/">Mapbox</a>',
 	maxZoom: 18,
-	accessToken: API_KEY
+	accessToken: 'pk.eyJ1IjoiZGVrbHVuZDc2IiwiYSI6ImNrdGFyZzB5ajFwNDkycHBranc3eGs1YXAifQ.l0IoSClWqCmzoJTDZmTfqw'
 });
 
 // Create the second tile layer that will be the background of the map.
 let satelliteStreets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v11/tiles/{z}/{x}/{y}?access_token={accessToken}', {
 	attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery (c) <a href="https://www.mapbox.com/">Mapbox</a>',
 	maxZoom: 18,
-	accessToken: API_KEY
+	accessToken: 'pk.eyJ1IjoiZGVrbHVuZDc2IiwiYSI6ImNrdGFyZzB5ajFwNDkycHBranc3eGs1YXAifQ.l0IoSClWqCmzoJTDZmTfqw'
 });
 
 // Create the third tile layer that will be the background of the map.
 let dark = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}?access_token={accessToken}', {
 	attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery (c) <a href="https://www.mapbox.com/">Mapbox</a>',
 	maxZoom: 18,
-	accessToken: API_KEY
+	accessToken: 'pk.eyJ1IjoiZGVrbHVuZDc2IiwiYSI6ImNrdGFyZzB5ajFwNDkycHBranc3eGs1YXAifQ.l0IoSClWqCmzoJTDZmTfqw'
 });
 
 // Create the map object with center, zoom level and default layer.
 let map = L.map('mapid', {
 	center: [40.7, -94.5],
 	zoom: 3,
+	worldCopyJump: true,
 	layers: [streets]
 });
 
@@ -105,14 +106,20 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
     	// Turn each feature into a circleMarker on the map.
     	pointToLayer: function(feature, latlng) {
       		console.log(data);
+			L.circleMarker(latlng + 360)
+			L.circleMarker(latlng)
+			L.circleMarker(latlng)
+			L.circleMarker(latlng)
       		return L.circleMarker(latlng);
         },
       // Set the style for each circleMarker using our styleInfo function.
     style: styleInfo,
      // Create a popup for each circleMarker to display the magnitude and location of the earthquake
      //  after the marker has been created and styled.
-     onEachFeature: function(feature, layer) {
-      layer.bindPopup("Magnitude: " + feature.properties.mag + "<br>Location: " + feature.properties.place);
+     onEachFeature: async function(feature, layer) {
+	  let timezoneID = await tzlookup(feature.geometry.coordinates[1], feature.geometry.coordinates[0])
+	  let computedDate = new Date(feature.properites.time).toLocaleString("en-US", {timeZone: timezoneID});
+      layer.bindPopup("Magnitude: " + feature.properties.mag + "<br>Location: " + feature.properties.place + "<br>Date: " + computedDate);
     }
   }).addTo(allEarthquakes);
 
@@ -172,8 +179,10 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
     style: styleInfo,
     // Create a popup for each circleMarker to display the magnitude and location of the earthquake
     //  after the marker has been created and styled.
-    onEachFeature: function(feature, layer) {
-      layer.bindPopup("Magnitude: " + feature.properties.mag + "<br>Location: " + feature.properties.place);
+    onEachFeature: async function(feature, layer) {
+	  let timezoneID = await tzlookup(feature.geometry.coordinates[1], feature.geometry.coordinates[0])
+	  let computedDate = new Date(feature.properites.time).toLocaleString("en-US", {timeZone: timezoneID});
+      layer.bindPopup("Magnitude: " + feature.properties.mag + "<br>Location: " + feature.properties.place + "<br>Date: " + computedDate);
     }
   }).addTo(majorEarthquakes);
 
@@ -223,6 +232,8 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
         weight: 2
       }
     }).addTo(tectonicPlates);
+
+	
 
     tectonicPlates.addTo(map);
 
