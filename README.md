@@ -4,7 +4,7 @@ Files for a page displaying a map of tectonic plates and all earthquakes across 
 
 ### Usage
 
-You can run the code yourself in Google Chrome using a local override provided you have your own API key from MapBox. 
+You can run the code yourself in Google Chrome using a local override as long as you have your own API key from MapBox. 
 
 To set up Local Overrides:
 
